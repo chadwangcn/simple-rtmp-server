@@ -29,10 +29,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <srs_core.hpp>
-
-#include <sys/uio.h>
-
 #include <srs_kernel_buffer.hpp>
+
+#ifndef  WIN32
+#include <sys/uio.h>
+#else
+#include <windows.h>
+struct iovec {
+	u_long iov_len;
+	char *iov_base;
+};
+#define inline __inline
+static inline int writev(int sock, struct iovec *iov, int nvecs)
+{
+	return -1;
+}
+#endif
 
 /**
 * the reader for the protocol to read from whatever channel.
